@@ -1,0 +1,14 @@
+import requests
+import json
+
+home = "http://localhost:8000/"
+
+
+def admin_acc_create_tes():
+    """TEST THE ADMIN ACCOUNT CREATION ENDPOINT"""
+    url = home + 'sy/_admin/test@gmail.com/Allahu123/'
+    res = requests.get(url=url)
+    print(json.loads(res.text))
+    
+    
+# admin_acc_create_tes()
