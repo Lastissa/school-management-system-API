@@ -1,3 +1,8 @@
+"""
+SalamYusu Endpoints Test
+"""
+
+
 import requests
 import json
 
@@ -6,7 +11,7 @@ home = "http://localhost:8000/"
 
 def admin_acc_create_tes():
     """TEST THE ADMIN ACCOUNT CREATION ENDPOINT"""
-    url = home + 'sy/_admin/test@gmail.com/Allahu123/issayisa/'
+    url = home + 'api/sy/_admin/test@gmail.com/Password111/<sy_secret>'
     res = requests.get(url=url)
     print(json.loads(res.text))
     

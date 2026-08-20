@@ -5,14 +5,14 @@ import logging, random, time
 logger = logging.getLogger(__name__)
 
 class SchemaManager(BaseUserManager):
-    def _blueprint(self, email, role, password= None, *args, **kwargs):
+    def _blueprint(self, email, role, password= None, **kwargs):
         if not email: raise ValueError("Email is req")
         if not role: raise ValueError("role is req")
         if role not in ['ADMIN', 'MANAGEMENT', 'TEACHING_STAFF', 'NON_TEACHING_STAFF', 'STUDENT', 'PARENT']:
             logger.error(msg=f"{email} tried to set an invalid role {role}")
             raise ValueError(f'{role} is INVALID')
         temp_user_key= role[:2] +str(time.time_ns()+random.randint(1,10)).replace('.', '')[-4:] #TE9999 or NO9999 
-        instance = self.model(email=email, role=role, user_key=temp_user_key, *args, **kwargs)
+        instance = self.model(email=email, role=role, user_key=temp_user_key, **kwargs)
         if not password: 
             logger.info(msg=f"{email} set no password on account creation")
             instance.set_unusable_password()
@@ -22,8 +22,15 @@ class SchemaManager(BaseUserManager):
         instance.save(using=self._db)
         return instance
     
-    def create_admin(self, email, password, *args, **kwargs):
-        user = self._blueprint(email = email, password = password, role = "ADMIN", is_staff=True, is_superuser=True,is_active=True,email_verified=True, *args, **kwargs)
+    def create_admin(self, email, password, **kwargs):
+        user = self._blueprint(email = email, password = password, role = "ADMIN", is_staff=True, is_superuser=True,is_active=True,email_verified=True, **kwargs)
+        return user
+    
+    def create_interested_applicant(self, email, password, **kwargs):
+        #=====================================================
+        #   This for enrolling interested students into the system
+        #=====================================================
+        user = self._blueprint(email = email, password = password, role = "STUDENT")
         return user
         
 class Schema(AbstractBaseUser):
@@ -60,7 +67,7 @@ class Schema(AbstractBaseUser):
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_mngt = models.BooleanField(default=False)                        # Models for management
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)                      # Mngt should be the one to change status
     email_verified = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
     
