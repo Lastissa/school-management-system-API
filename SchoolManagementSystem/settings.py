@@ -10,7 +10,7 @@ AUTH_USER_MODEL = 'Common.Schema'
 
 SECRET_KEY = os.getenv('django_secret_key')
 
-DEBUG = True
+DEBUG = os.getenv('django_secret_key', False)
 
 ALLOWED_HOSTS = ['localhost',]
 
@@ -25,9 +25,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'rest_framework_simplejwt',
+    'rest_framework',
     
     'Common',
-    'SalamYusuf'
+    'SalamYusuf',
+    'Onboarding'
     
     
 ]
@@ -102,5 +104,21 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
+
+from datetime import timedelta
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(hours=12),
+    "SIGNING_KEY": os.getenv("jwt_secret_key"),
+    #Remember to Read docs to know more brr AS I CURENTLY ONLY USE WHHAT I NEED
+}
+
 SERVICE_MODE = os.getenv('service_mode', False)
 SY_SECRET = os.getenv('sy_secret')
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'django_cache_table',
+    }
+}
